@@ -19,7 +19,7 @@ public class FunctionTest
             new Request
             {
                 Name = "filename.txt",
-                Content = Encoding.UTF8.GetBytes("test")
+                Content = Encoding.UTF8.GetBytes("content")
             },
             true
         },
@@ -27,7 +27,7 @@ public class FunctionTest
             new Request
             {
                 Name = null!,
-                Content = Encoding.UTF8.GetBytes("test")
+                Content = Encoding.UTF8.GetBytes("content")
             },
             false
         },
@@ -35,7 +35,7 @@ public class FunctionTest
             new Request
             {
                 Name = "",
-                Content = Encoding.UTF8.GetBytes("test")
+                Content = Encoding.UTF8.GetBytes("content")
             },
             false
         },
@@ -43,7 +43,7 @@ public class FunctionTest
             new Request
             {
                 Name = "filenamewithoutextension",
-                Content = Encoding.UTF8.GetBytes("test")
+                Content = Encoding.UTF8.GetBytes("content")
             },
             false
         },
@@ -66,8 +66,8 @@ public class FunctionTest
         {
             new Request
             {
-                Name = "testdata.json",
-                Content = System.IO.File.ReadAllBytes("testdata.json") // 6MB
+                Name = "largefile.json",
+                Content = System.IO.File.ReadAllBytes("largefile.json") // 6MB
             },
             false
         }

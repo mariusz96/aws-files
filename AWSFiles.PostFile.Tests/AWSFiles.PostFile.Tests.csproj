@@ -16,7 +16,7 @@
     <ProjectReference Include="..\AWSFiles.PostFile\AWSFiles.PostFile.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="testdata.json">
+    <None Update="largefile.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
