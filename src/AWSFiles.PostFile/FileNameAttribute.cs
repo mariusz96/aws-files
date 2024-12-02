@@ -24,11 +24,6 @@ public class FileNameAttribute : ValidationAttribute
             return false;
         }
 
-        if (!s.Contains('.'))
-        {
-            return false;
-        }
-
         return s.All(c => !InvalidFileNameChars.Contains(c));
     }
 }

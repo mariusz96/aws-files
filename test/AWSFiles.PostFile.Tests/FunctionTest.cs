@@ -42,14 +42,6 @@ public class FunctionTest
         {
             new Request
             {
-                Name = "filenamewithoutextension",
-                Content = Encoding.UTF8.GetBytes("filecontent")
-            },
-            false
-        },
-        {
-            new Request
-            {
                 Name = "filename.txt",
                 Content = null!
             },
