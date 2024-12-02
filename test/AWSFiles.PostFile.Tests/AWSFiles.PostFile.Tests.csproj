@@ -13,7 +13,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AWSFiles.PostFile\AWSFiles.PostFile.csproj" />
+    <ProjectReference Include="..\..\src\AWSFiles.PostFile\AWSFiles.PostFile.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="largefile.json">
