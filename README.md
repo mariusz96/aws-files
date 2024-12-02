@@ -32,11 +32,11 @@ Invoke GetFile
 - `Test Explorer` > `Run All Tests`
 
 ## Deploy:
-- Create new S3 bucket with unique name and cofigure `BUCKET_NAME` environment variable in `aws-lambda-tools-defaults.json` files
-- Create new DynamoDB table with `Files` table name and `Id` hash key name
-- Right click on `AWSFiles.PostFile` and `AWSFiles.GetFile` and `Publish to AWS Lambda...`
-- Make sure lambdas IAM roles have permissions to access created resources
-- Delete created resources to prevent ongoing charges
+- Create a new S3 bucket with unique name and cofigure `BUCKET_NAME` environment variable in `aws-lambda-tools-defaults.json` files
+- Create a new DynamoDB table with `Files` table name and `Id` hash key name
+- Right click on `AWSFiles.PostFile` and `AWSFiles.GetFile` projects and `Publish to AWS Lambda...`
+- Add permisions for lambdas' IAM roles to access other created resources
+- Delete all created resources to prevent ongoing charges
 
 ## AWS services used:
 - Lambda
