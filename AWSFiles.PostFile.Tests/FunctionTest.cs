@@ -19,7 +19,7 @@ public class FunctionTest
             new Request
             {
                 Name = "filename.txt",
-                Content = Encoding.UTF8.GetBytes("content")
+                Content = Encoding.UTF8.GetBytes("filecontent")
             },
             true
         },
@@ -27,7 +27,7 @@ public class FunctionTest
             new Request
             {
                 Name = null!,
-                Content = Encoding.UTF8.GetBytes("content")
+                Content = Encoding.UTF8.GetBytes("filecontent")
             },
             false
         },
@@ -35,7 +35,7 @@ public class FunctionTest
             new Request
             {
                 Name = "",
-                Content = Encoding.UTF8.GetBytes("content")
+                Content = Encoding.UTF8.GetBytes("filecontent")
             },
             false
         },
@@ -43,7 +43,7 @@ public class FunctionTest
             new Request
             {
                 Name = "filenamewithoutextension",
-                Content = Encoding.UTF8.GetBytes("content")
+                Content = Encoding.UTF8.GetBytes("filecontent")
             },
             false
         },
