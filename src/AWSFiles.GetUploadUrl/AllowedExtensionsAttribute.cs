@@ -7,7 +7,6 @@ public class AllowedExtensionsAttribute : ValidationAttribute
 {
     public AllowedExtensionsAttribute(params string?[] extensions)
     {
-        ArgumentNullException.ThrowIfNull(extensions);
         Extensions = extensions;
         ErrorMessage = "The {0} field extension does not equal any of the values specified in AllowedExtensionsAttribute.";
     }
