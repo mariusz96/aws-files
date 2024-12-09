@@ -19,11 +19,16 @@ public class Function
     {
         AWSConfigsS3.UseSignatureVersion4 = true;
 
+        string bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
+            ?? throw new InvalidOperationException("BUCKET_NAME environment variable not found.");
+        string urlExpiration = Environment.GetEnvironmentVariable("URL_EXPIRATION")
+            ?? throw new InvalidOperationException("URL_EXPIRATION environment variable not found.");
+
         _s3Client = new AmazonS3Client();
         _options = new FunctionOptions()
         {
-            BucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
-                ?? throw new InvalidOperationException("BUCKET_NAME environment variable not found.")
+            BucketName = bucketName,
+            UrlExpiration = TimeSpan.Parse(urlExpiration)
         };
     }
 
@@ -33,23 +38,24 @@ public class Function
     /// <param name="request">The event for the Lambda function handler to process.</param>
     /// <param name="context">The ILambdaContext that provides methods for logging and describing the Lambda environment.</param>
     /// <returns>The response.</returns>
-    public async Task<Response> FunctionHandler(Request request, ILambdaContext context)
+    public Response FunctionHandler(Request request, ILambdaContext context)
     {
+        // NOTE: Max file size is validated in ProcessUpload function.
         if (!MiniValidator.TryValidate(request, out var errors))
         {
-            throw new InvalidOperationException($"The request was invalid: {JsonSerializer.Serialize(errors)}.");
+            throw new InvalidOperationException($"The request was invalid. Errors: {JsonSerializer.Serialize(errors)}.");
         }
 
         string id = Guid.NewGuid().ToString();
         string fileName = $"{id}{Path.GetExtension(request.Name)}";
 
-        string url = await _s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest
+        string url = _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
         {
             BucketName = _options.BucketName,
             Key = fileName,
             Verb = HttpVerb.PUT,
-            ContentType = MimeTypes.GetMimeType(request.Name),
-            Expires = DateTime.UtcNow.AddHours(1)
+            ContentType = MimeTypes.GetMimeType(fileName),
+            Expires = DateTime.UtcNow.Add(_options.UrlExpiration)
         });
 
         context.Logger.LogInformation($"Created upload URL for {id}.");
@@ -65,12 +71,13 @@ public class Function
 public class FunctionOptions
 {
     public string BucketName { get; set; } = string.Empty;
+    public TimeSpan UrlExpiration { get; set; }
 }
 
 public class Request
 {
     [Required(AllowEmptyStrings = false)]
-    [AllowedExtensions(".jpg", ".mp3", ".mp4", ".txt", ".json")]
+    [FileExtensions(Extensions = "jpg,mp3,mp4,txt,json")]
     public string Name { get; set; } = string.Empty;
 }
 

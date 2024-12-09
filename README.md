@@ -18,6 +18,9 @@ Content-Type: image/jpeg
 (binary)
 ```
 ```JavaScript
+200 OK
+```
+```JavaScript
 Invoke GetDownloadUrl
 "a3ccf8ac-fed4-458c-a0b3-9d552f634403"
 ```
@@ -28,6 +31,8 @@ Invoke GetDownloadUrl
 ```
 ```JavaScript
 GET https://mariusz96-aws-files.s3.amazonaws.com/a3ccf8ac-fed4-458c-a0b3-9d552f634403.jpg?X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGUaCXVzLWVhc3QtMSJGMEQCIHnBXGolUBPxA%2BLulz5%2FqqW75u6hLImQMHOkD01%2FEoVWAiA36Z5KWtPfcPkmFQwmqFglAb2DH08dHJy4AI1%2Ffz0hASrwAggdEAAaDDMzOTcxMzExMjY0OCIMPFXNZiaOafaYCdLCKs0CabT8dK%2B3gpIUunlATL5MP0MqS9vc3Vt%2FIUCaY36d3q4uY7AVVtywAADCp8CEmlQRCgok1dmqDnRuAETEpH%2BrMFgy73HWO6V9eWST0659hmkagWlfyoW4iQmUJnOq%2FQ%2FytzlrKBJ6xV3yyxs8QIyF0yeRUzBoc8kcu1S0tYC2ihu8Sxd1neRml5PpuE1ORD91hveyBUfujI1tEtUPQDrOsfpisHT78GMdWmFULkF2w5PaL7CMhd14ogPrtpX%2BFp9TXX8fbPmy10%2BeWNkX3W3NwT2jlXC1ETQIBTxPRnT%2BO0gJGpHoJdh0%2Bc5cicwGkKDTYxDI1QsFVbIiFXcaqAhDNiE3yIK9YQmFVbR1attpGClK7GREiUx8PGqgvkA3RQprOqDdOs%2BITz3SZc%2Bp9lE9H7dDN5ZUe3mFnAVAm74%2F8RMzoYLFElGwzDbMfuh1MNSPyLoGOp8BjqP4HzrWPc9qviDAyJ9VZABQX2BipNGoYqiaBi2HX6FTVc90B2qSkrhrMEkM81rKGMm3kH5imFf5%2F7SI0hThq2k2X8Il1xte49knjYdJC%2Bi2L1igvNWjKyeeq4AyuvwLwchLsz8piOYwrn4vQHLB3g5zz%2BCF3ZMLOmh9T8dUx08zeSNBvoHVQKaQDi1Emy1VvdH%2Bw8wuj5aWaIVqmFQX&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAU6GD2XJEDX7HS46S%2F20241205%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241205T200752Z&X-Amz-SignedHeaders=host&X-Amz-Signature=5c66e03a072b247ace9f4eb493822e340cba27396208bd981b44a3496beb37b3
+```
+```JavaScript
 (binary)
 ```
 
@@ -44,7 +49,7 @@ GET https://mariusz96-aws-files.s3.amazonaws.com/a3ccf8ac-fed4-458c-a0b3-9d552f6
 - Create a new DynamoDB table with `Files` table name and `Id` hash key name
 - Publish `GetUploadUrl`, `ProcessUpload` and `GetDownloadUrl` functions to Lambda
 - Add permisions to all functions to access other created resources
-- Add trigger to `ProcessUpload` function on `All object create events` in the S3 bucket
+- Add trigger to `ProcessUpload` function on `All object create events` in the created S3 bucket
 - Delete all created resources to prevent ongoing charges
 
 ## AWS services used:

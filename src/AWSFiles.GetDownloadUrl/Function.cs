@@ -19,12 +19,17 @@ public class Function
     {
         AWSConfigsS3.UseSignatureVersion4 = true;
 
+        string bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
+            ?? throw new InvalidOperationException("BUCKET_NAME environment variable not found.");
+        string urlExpiration = Environment.GetEnvironmentVariable("URL_EXPIRATION")
+            ?? throw new InvalidOperationException("URL_EXPIRATION environment variable not found.");
+
         _ddbClient = new AmazonDynamoDBClient();
         _s3Client = new AmazonS3Client();
         _options = new FunctionOptions()
         {
-            BucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
-                ?? throw new InvalidOperationException("BUCKET_NAME environment variable not found.")
+            BucketName = bucketName,
+            UrlExpiration = TimeSpan.Parse(urlExpiration)
         };
     }
 
@@ -45,12 +50,12 @@ public class Function
 
         context.Logger.LogInformation($"Loaded {id} from database.");
 
-        string url = await _s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest
+        string url = _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
         {
             BucketName = _options.BucketName,
             Key = file.Name,
             Verb = HttpVerb.GET,
-            Expires = DateTime.UtcNow.AddHours(1)
+            Expires = DateTime.UtcNow.Add(_options.UrlExpiration)
         });
 
         context.Logger.LogInformation($"Created download URL for {id}.");
@@ -65,6 +70,7 @@ public class Function
 public class FunctionOptions
 {
     public string BucketName { get; set; } = string.Empty;
+    public TimeSpan UrlExpiration { get; set; }
 }
 
 public class Response
