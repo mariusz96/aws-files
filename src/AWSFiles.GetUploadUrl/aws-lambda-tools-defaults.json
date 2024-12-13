@@ -13,5 +13,5 @@
   "function-memory-size": 512,
   "function-timeout": 30,
   "function-handler": "AWSFiles.GetUploadUrl::AWSFiles.GetUploadUrl.Function::FunctionHandler",
-  "environment-variables": "\"URL_EXPIRATION\"=\"01:00:00\";\"BUCKET_NAME\"=\"mariusz96-aws-files\""
+  "environment-variables": "\"BucketName\"=\"mariusz96-aws-files\";\"UrlExpiration\"=\"01:00:00\""
 }

@@ -5,6 +5,7 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.S3Events;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.Extensions.Configuration;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
@@ -13,22 +14,22 @@ namespace AWSFiles.ProcessUpload;
 public class Function
 {
     private readonly IAmazonS3 _s3Client;
-    private readonly IAmazonDynamoDB _ddbClient;
+    private readonly IDynamoDBContext _ddbContext;
     private readonly FunctionOptions _options;
 
     public Function()
     {
         AWSConfigsS3.UseSignatureVersion4 = true;
 
-        string maxFileSize = Environment.GetEnvironmentVariable("MAX_FILE_SIZE")
-            ?? throw new InvalidOperationException("MAX_FILE_SIZE environment variable not found.");
+        var ddbClient = new AmazonDynamoDBClient();
+        var configuration = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .Build();
 
         _s3Client = new AmazonS3Client();
-        _ddbClient = new AmazonDynamoDBClient();
-        _options = new FunctionOptions
-        {
-            MaxFileSize = long.Parse(maxFileSize)
-        };
+        _ddbContext = new DynamoDBContext(ddbClient);
+        _options = configuration.Get<FunctionOptions>()
+            ?? throw new InvalidOperationException("Function options not found in configuration.");
     }
 
     /// <summary>
@@ -55,24 +56,24 @@ public class Function
 
             if (s3Event.Object.Size > _options.MaxFileSize)
             {
+                context.Logger.LogInformation($"{id} exceeded max file size.");
+
                 await _s3Client.DeleteObjectAsync(new DeleteObjectRequest
                 {
                     BucketName = s3Event.Bucket.Name,
                     Key = s3Event.Object.Key
                 });
 
-                context.Logger.LogInformation($"{id} exceeded max file size. Deleted from S3.");
+                context.Logger.LogInformation($"Deleted {id} from S3.");
 
-                using var ddbContext2 = new DynamoDBContext(_ddbClient);
-                await ddbContext2.DeleteAsync<File>(id);
+                await _ddbContext.DeleteAsync<File>(id);
 
                 context.Logger.LogInformation($"Deleted {id} from database.");
 
                 continue;
             }
 
-            using var ddbContext = new DynamoDBContext(_ddbClient);
-            await ddbContext.SaveAsync(new File
+            await _ddbContext.SaveAsync(new File
             {
                 Id = id,
                 Name = s3Event.Object.Key

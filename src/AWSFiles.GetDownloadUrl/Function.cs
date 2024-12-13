@@ -4,6 +4,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.Lambda.Core;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.Extensions.Configuration;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
@@ -11,7 +12,7 @@ namespace AWSFiles.GetDownloadUrl;
 
 public class Function
 {
-    private readonly IAmazonDynamoDB _ddbClient;
+    private readonly IDynamoDBContext _ddbContext;
     private readonly IAmazonS3 _s3Client;
     private readonly FunctionOptions _options;
 
@@ -19,18 +20,15 @@ public class Function
     {
         AWSConfigsS3.UseSignatureVersion4 = true;
 
-        string bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
-            ?? throw new InvalidOperationException("BUCKET_NAME environment variable not found.");
-        string urlExpiration = Environment.GetEnvironmentVariable("URL_EXPIRATION")
-            ?? throw new InvalidOperationException("URL_EXPIRATION environment variable not found.");
+        var ddbClient = new AmazonDynamoDBClient();
+        var configuration = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .Build();
 
-        _ddbClient = new AmazonDynamoDBClient();
+        _ddbContext = new DynamoDBContext(ddbClient);
         _s3Client = new AmazonS3Client();
-        _options = new FunctionOptions()
-        {
-            BucketName = bucketName,
-            UrlExpiration = TimeSpan.Parse(urlExpiration)
-        };
+        _options = configuration.Get<FunctionOptions>()
+            ?? throw new InvalidOperationException("Function options not found in configuration.");
     }
 
     /// <summary>
@@ -41,8 +39,7 @@ public class Function
     /// <returns>The response.</returns>
     public async Task<Response?> FunctionHandler(string id, ILambdaContext context)
     {
-        using var ddbContext = new DynamoDBContext(_ddbClient);
-        var file = await ddbContext.LoadAsync<File>(id);
+        var file = await _ddbContext.LoadAsync<File>(id);
         if (file is null)
         {
             return null;

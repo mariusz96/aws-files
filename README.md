@@ -45,7 +45,7 @@ GET https://mariusz96-aws-files.s3.amazonaws.com/a3ccf8ac-fed4-458c-a0b3-9d552f6
 - `Test Explorer` > `Run All Tests`
 
 ## Deploy:
-- Create a new S3 bucket with unique name and cofigure `BUCKET_NAME` environment variable in `aws-lambda-tools-defaults.json` files
+- Create a new S3 bucket with unique name and cofigure `BucketName` environment variable in `aws-lambda-tools-defaults.json` files
 - Create a new DynamoDB table with `Files` table name and `Id` hash key name
 - Publish `GetUploadUrl`, `ProcessUpload` and `GetDownloadUrl` functions to Lambda
 - Add permisions to all functions to access other created resources

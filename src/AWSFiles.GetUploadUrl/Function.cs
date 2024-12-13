@@ -2,6 +2,7 @@ using Amazon;
 using Amazon.Lambda.Core;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.Extensions.Configuration;
 using MiniValidation;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
@@ -19,17 +20,13 @@ public class Function
     {
         AWSConfigsS3.UseSignatureVersion4 = true;
 
-        string bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME")
-            ?? throw new InvalidOperationException("BUCKET_NAME environment variable not found.");
-        string urlExpiration = Environment.GetEnvironmentVariable("URL_EXPIRATION")
-            ?? throw new InvalidOperationException("URL_EXPIRATION environment variable not found.");
+        var configuration = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .Build();
 
         _s3Client = new AmazonS3Client();
-        _options = new FunctionOptions()
-        {
-            BucketName = bucketName,
-            UrlExpiration = TimeSpan.Parse(urlExpiration)
-        };
+        _options = configuration.Get<FunctionOptions>()
+            ?? throw new InvalidOperationException("Function options not found in configuration.");
     }
 
     /// <summary>
@@ -40,7 +37,7 @@ public class Function
     /// <returns>The response.</returns>
     public Response FunctionHandler(Request request, ILambdaContext context)
     {
-        // NOTE: Max file size is validated in ProcessUpload function.
+        // NOTE: Max file size is validated in the ProcessUpload function.
         if (!MiniValidator.TryValidate(request, out var errors))
         {
             throw new InvalidOperationException($"The request was invalid. Errors: {JsonSerializer.Serialize(errors)}.");

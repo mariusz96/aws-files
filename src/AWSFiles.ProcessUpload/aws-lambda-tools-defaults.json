@@ -13,5 +13,5 @@
   "function-memory-size": 512,
   "function-timeout": 30,
   "function-handler": "AWSFiles.ProcessUpload::AWSFiles.ProcessUpload.Function::FunctionHandler",
-  "environment-variables": "\"MAX_FILE_SIZE\"=\"10485760\""
+  "environment-variables": "\"MaxFileSize\"=\"10485760\""
 }
