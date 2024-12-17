@@ -37,7 +37,7 @@ public class Function
     /// <returns>The response.</returns>
     public Response FunctionHandler(Request request, ILambdaContext context)
     {
-        // NOTE: Max file size is validated in the ProcessUpload function.
+        // Max file size is validated in ProcessUpload function.
         if (!MiniValidator.TryValidate(request, out var errors))
         {
             throw new InvalidOperationException($"The request was invalid. Errors: {JsonSerializer.Serialize(errors)}.");
